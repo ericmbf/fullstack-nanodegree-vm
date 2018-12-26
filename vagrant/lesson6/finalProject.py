@@ -25,19 +25,24 @@ item =  {'name':'Cheese Pizza','description':'made with fresh cheese','price':'$
 @app.route('/')
 @app.route('/restaurants')
 def showRestaurants():
-    return "This page show all my restaurants"
+    # return "This page show all my restaurants"
+    return render_template('restaurants.html', restaurants=restaurants)
 
 @app.route('/restaurant/new')
 def newRestaurant():
-    return "New Restaurant page"
+    # return "New Restaurant page"
+    return render_template('newRestaurant.html')
 
 @app.route('/restaurant/<int:restaurant_id>/edit')
 def editRestaurant(restaurant_id):
-    return "Edit Restaurant {}".format(restaurant_id)
+    # return "Edit Restaurant {}".format(restaurant_id)
+    restaurant = restaurants[restaurant_id - 1]
+    return render_template('editRestaurant.html', restaurant=restaurant)
 
 @app.route('/restaurant/<int:restaurant_id>/delete')
 def deleteRestaurant(restaurant_id):
-    return "Delete Restaurant {}".format(restaurant_id)
+    restaurant = restaurants[restaurant_id - 1]
+    return render_template('deleteRestaurant.html', restaurant=restaurant)
 
 @app.route('/restaurant/<int:restaurant_id>')
 @app.route('/restaurant/<int:restaurant_id>/menu')
@@ -45,7 +50,9 @@ def showMenu(restaurant_id):
     # restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     # items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
     # return render_template('menu.html', restaurant=restaurant, items=items)
-    return "This page show the menu from restaurant {}".format(restaurant_id)
+    # return "This page show the menu from restaurant {}".format(restaurant_id)
+    return render_template('menu.html', restaurant=restaurants[restaurant_id - 1], 
+        items=items)
 
 @app.route('/restaurant/<int:restaurant_id>/menu/new/', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
@@ -58,7 +65,8 @@ def newMenuItem(restaurant_id):
     #     return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     # else:
     #     return render_template('newMenuItem.html', restaurant_id=restaurant_id)
-    return "This page is making a new menu item for restaurant {}".format(restaurant_id)
+    # return "This page is making a new menu item for restaurant {}".format(restaurant_id)
+    return render_template('newMenuItem.html', restaurant_id=restaurant_id)
 
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/edit/', methods=['GET', 'POST'])
 def editMenuItem(restaurant_id, menu_id):
@@ -73,7 +81,9 @@ def editMenuItem(restaurant_id, menu_id):
     # else:
     #     return render_template('editMenuItem.html', restaurant_id=restaurant_id, 
     #         menu_id=menu_id, i=editItem)
-    return "This page edit the menu item {}".format(menu_id)
+    # return "This page edit the menu item {}".format(menu_id)
+    return render_template('editMenuItem.html', restaurant_id=restaurant_id, 
+        menu_id=menu_id, restaurant=restaurant)
 
 # Task 3: Create a route for deleteMenuItem function here
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete/', methods=['GET', 'POST'])
@@ -87,7 +97,9 @@ def deleteMenuItem(restaurant_id, menu_id):
     #     return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     # else:
     #     return render_template('deleteMenuItem.html', item=deleteItem)
-    return "This page delete the menu item {}".format(menu_id)
+    # return "This page delete the menu item {}".format(menu_id)
+    return render_template('deleteMenuItem.html', restaurant_id=restaurant_id, 
+        menu_id=menu_id, item=items[menu_id - 1])
 
 # @app.route('/restaurants/<int:restaurant_id>/menu/JSON')
 # def restaurantMenuJSON(restaurant_id):

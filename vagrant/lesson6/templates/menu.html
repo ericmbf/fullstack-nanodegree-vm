@@ -7,7 +7,7 @@
         {{restaurant.name}}
     </h1>
 
-    <!--MESSAGE FLASHING EXAMPLE -->
+    <!-- MESSAGE FLASHING EXAMPLE -->
     {% with messages = get_flashed_messages() %}
     {% if messages %}
 
@@ -19,13 +19,14 @@
     {% endif %}
     {% endwith %}
 
-    <a href='{{url_for("newMenuItem", restaurant_id = restaurant.id) }}'>
+    <a href='{{url_for("newMenuItem", restaurant_id = restaurant.id)}}'>
         Create New Item
     </a>
 
     {% for i in items %}
     <h3>
         {{i.name}}
+        {{i.id}}
     </h3>
 
     {{i.description}}
