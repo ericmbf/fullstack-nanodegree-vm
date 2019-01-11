@@ -13,15 +13,19 @@
                 <h1>Categories</h1>
                 <ul>
                     {% for category in categories %}
-                    <li> {{ category.name }} </li>
+                    <a href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
+                        <li> {{ category.name }} </li>
+                    </a>
                     {% endfor %}
                 </ul>
             </div>
             <div class="col-md-9">
-                <h1>Latest Items</h1>
+                <h1>{{category_name}}({{ items|length }})</h1>
                 <ul>
-                    {% for item in latest_items %}
-                    <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
+                    {% for item in items %}
+                    <a href="{{ url_for('getItemDescription', category_name = item.category.name, item_name = item.name )}}">
+                        <li> {{ item.name }}</li>
+                    </a>
                     {% endfor %}
                 </ul>
             </div>

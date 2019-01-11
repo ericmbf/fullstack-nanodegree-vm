@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+
+<body>
+    <h1> New Item </h1>
+
+    <form id='new_item' action="{{url_for('addNewItem')}}" method='POST'>
+
+        <div>
+            <p>Name:</p>
+            <input type='text' size='30' name='name'>
+
+            <p>Description:</p>
+            <input type='text' name='description'>
+            <p>Category:</p>
+            {% for category in categories %}
+                <input type="radio" name="category" value="{{category.name}}"> {{category.name|title}}<br>
+            {% endfor %}
+        </div>
+        <br>
+        <input type='submit' value='Create'>
+    </form>
+    <a href="{{url_for('latestItems')}}">Cancel</a>
+
+</body>
+
+</html>

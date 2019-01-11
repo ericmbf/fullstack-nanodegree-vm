@@ -33,6 +33,6 @@ session.add(Category(name='Snowboarding'))
 session.add(Category(name='Rock Climbing'))
 session.add(Category(name='Foosball'))
 session.add(Category(name='Skating'))
-
+session.commit()
 
 print "Added Categories!"

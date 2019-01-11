@@ -13,15 +13,22 @@
                 <h1>Categories</h1>
                 <ul>
                     {% for category in categories %}
-                    <li> {{ category.name }} </li>
+                    <a href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
+                        <li> {{ category.name }} </li>
+                    </a>
                     {% endfor %}
                 </ul>
             </div>
             <div class="col-md-9">
+                {% if login == true %}
+                <a href="{{ url_for('addNewItem') }}">Add new Item</a>
+                {% endif %}
                 <h1>Latest Items</h1>
                 <ul>
                     {% for item in latest_items %}
-                    <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
+                    <a href="{{ url_for('getItemDescription', category_name = item.category.name, item_name = item.name )}}">
+                        <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
+                    </a>
                     {% endfor %}
                 </ul>
             </div>
