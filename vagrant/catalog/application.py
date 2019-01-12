@@ -233,19 +233,18 @@ def editItem(item_name):
         return render_template('edit_item.html', item=editItem, 
             categories=categories)
 
-# # Task 3: Create a route for deleteMenuItem function here
-# @app.route('/category/<int:category_id>/menu/<int:menu_id>/delete/', methods=['GET', 'POST'])
-# def deleteMenuItem(category_id, menu_id):
-#     deleteItem = session.query(MenuItem).filter_by(id=menu_id).one()
 
-#     if request.method == 'POST':
-#         session.delete(deleteItem)
-#         session.commit()
-#         flash("Menu Item Successfully Deleted")
-#         return redirect(url_for('showMenu', category_id=category_id))
-#     else:
-#         return render_template('deleteMenuItem.html',
-#                 category_id=category_id, menu_id=menu_id, item=deleteItem)
+@app.route('/catalog/<string:item_name>/delete/', methods=['GET', 'POST'])
+def deleteItem(item_name):
+    deleteItem = session.query(Item).filter_by(name=item_name).one()
+
+    if request.method == 'POST':
+        session.delete(deleteItem)
+        session.commit()
+        flash("Menu Item Successfully Deleted")
+        return redirect(url_for('latestItems'))
+    else:
+        return render_template('delete_item.html', item=deleteItem)
 
 # @app.route('/categories/JSON')
 # def categoriesJSON():
