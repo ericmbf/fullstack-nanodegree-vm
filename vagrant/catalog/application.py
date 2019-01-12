@@ -25,39 +25,6 @@ session = DBSession()
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 
-
-@app.route('/')
-@app.route('/catalog/')
-def latestItems():
-    categories = session.query(Category).all()
-    latest_items = session.query(Item).order_by(desc(Item.id)).limit(5).all()
-    login = False
-
-    if login_session.get('user_id'):
-        login = True
-
-    return render_template('latest_items.html', categories=categories,
-                           latest_items=latest_items, login=login)
-
-
-@app.route('/catalog/<string:category_name>/Items')
-def getItemsFromCategory(category_name):
-    categories = session.query(Category).all()
-    category = session.query(Category).filter_by(name=category_name).one()
-    items = session.query(Item).filter_by(category_id=category.id).all()
-    return render_template('items_by_category.html',
-                           category_name=category_name, items=items, categories=categories)
-
-
-@app.route('/catalog/<string:category_name>/<string:item_name>')
-def getItemDescription(category_name, item_name):
-    category = session.query(Category).filter_by(name=category_name).one()
-    item = session.query(Item).filter_by(
-        category_id=category.id, name=item_name).one()
-    return render_template('item_description.html',
-                           item_name=item.name, item_description=item.description)
-
-
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -191,9 +158,46 @@ def getUserID(email):
         return user.id
     except:
         return None
+    
+
+@app.route('/')
+@app.route('/catalog/')
+def latestItems():
+    categories = session.query(Category).all()
+    latest_items = session.query(Item).order_by(desc(Item.id)).limit(5).all()
+    login = False
+
+    if login_session.get('user_id'):
+        login = True
+
+    return render_template('latest_items.html', categories=categories,
+                           latest_items=latest_items, login=login)
+
+
+@app.route('/catalog/<string:category_name>/Items')
+def getItemsFromCategory(category_name):
+    categories = session.query(Category).all()
+    category = session.query(Category).filter_by(name=category_name).one()
+    items = session.query(Item).filter_by(category_id=category.id).all()
+    return render_template('items_by_category.html',
+                           category_name=category_name, items=items, categories=categories)
+
+
+@app.route('/catalog/<string:category_name>/<string:item_name>')
+def getItem(category_name, item_name):
+    category = session.query(Category).filter_by(name=category_name).one()
+    item = session.query(Item).filter_by(
+        category_id=category.id, name=item_name).one()
+    login = False
+
+    if login_session.get('user_id'):
+        login = True
+
+    return render_template('item_description.html', item=item, login=login)
+
 
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
-def addNewItem():
+def addItem():
     if request.method == 'POST':
         category = session.query(Category).filter_by(name=request.form['category']).one()
         newItem = Item(name=request.form['name'],
@@ -210,23 +214,24 @@ def addNewItem():
         categories = session.query(Category).all()
         return render_template('new_item.html', categories=categories)
 
-# @app.route('/category/<int:category_id>/menu/<int:menu_id>/edit/', methods=['GET', 'POST'])
-# def editMenuItem(category_id, menu_id):
-#     editItem = session.query(MenuItem).filter_by(id=menu_id).one()
+@app.route('/catalog/<string:item_name>/edit/', methods=['GET', 'POST'])
+def editItem(item_name):
+    editItem = session.query(Item).filter_by(name=item_name).one()
+    categories = session.query(Category).all()
 
-#     if request.method == 'POST':
-#         editItem.name = request.form['name']
-#         editItem.description = request.form['description']
-#         editItem.price = request.form['price']
-#         editItem.course = request.form['course']
-#         session.add(editItem)
-#         session.commit()
-#         flash("Menu Item Successfully Edited")
-#         return redirect(url_for('showMenu', category_id=category_id))
-#     else:
-#         return render_template('editMenuItem.html', category_id=category_id,
-#             menu_id=menu_id, item=editItem)
-#     return "This page edit the menu item {}".format(menu_id)
+    if request.method == 'POST':
+        category = session.query(Category).filter_by(name=request.form['category']).one()
+        editItem.name = request.form['name']
+        editItem.description = request.form['description']
+        editItem.category_id = category.id
+        editItem.category = category
+        session.add(editItem)
+        session.commit()
+        flash("Menu Item Successfully Edited")
+        return redirect(url_for('latestItems'))
+    else:
+        return render_template('edit_item.html', item=editItem, 
+            categories=categories)
 
 # # Task 3: Create a route for deleteMenuItem function here
 # @app.route('/category/<int:category_id>/menu/<int:menu_id>/delete/', methods=['GET', 'POST'])

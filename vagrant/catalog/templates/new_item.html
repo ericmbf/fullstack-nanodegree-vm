@@ -7,18 +7,19 @@
 <body>
     <h1> New Item </h1>
 
-    <form id='new_item' action="{{url_for('addNewItem')}}" method='POST'>
-
+    <form id='new_item' action="{{url_for('addItem')}}" method='POST'>
         <div>
             <p>Name:</p>
             <input type='text' size='30' name='name'>
 
             <p>Description:</p>
-            <input type='text' name='description'>
+            ​<textarea rows="4" cols="50" name="description" form="new_item"></textarea>
             <p>Category:</p>
-            {% for category in categories %}
-                <input type="radio" name="category" value="{{category.name}}"> {{category.name|title}}<br>
-            {% endfor %}
+            <select name="category">
+                    {% for category in categories %}
+                    <option value="{{category.name}}">{{category.name|title}}</option>
+                    {% endfor %}
+            </select>
         </div>
         <br>
         <input type='submit' value='Create'>

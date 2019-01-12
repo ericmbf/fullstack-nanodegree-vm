@@ -21,12 +21,12 @@
             </div>
             <div class="col-md-9">
                 {% if login == true %}
-                <a href="{{ url_for('addNewItem') }}">Add new Item</a>
+                <a href="{{ url_for('addItem') }}">Add new Item</a>
                 {% endif %}
                 <h1>Latest Items</h1>
                 <ul>
                     {% for item in latest_items %}
-                    <a href="{{ url_for('getItemDescription', category_name = item.category.name, item_name = item.name )}}">
+                    <a href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
                         <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
                     </a>
                     {% endfor %}
@@ -49,12 +49,5 @@
     {% endif %}
     {% endwith %}
 
-</div>
-
-<div class="row padding-top padding-bottom">
-    <div class="col-md-1"></div>
-    <div class="col-md-10 padding-none">
-    </div>
-    <div class="col-md-1"></div>
 </div>
 {% endblock %}

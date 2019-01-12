@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+</head>
+
+<body>
+    <h1> Edit Item </h1>
+
+    <form id='new_item' action="{{url_for('editItem', item_name=item.name)}}" method='POST'>
+
+        <div>
+            <p>Title:</p>
+            <input type='text' size='30' name='name' value='{{item.name}}'>
+            <p>Description:</p>
+            ​<textarea rows="4" cols="50" name="description" form="new_item">{{item.description}}</textarea>
+            <p>Category:</p>
+            <select name="category">
+                {% for category in categories %}
+                {% if category.id == item.category.id %}
+                <option value="{{category.name}}" selected>{{category.name|title}}</option>
+                {% else %}
+                <option value="{{category.name}}">{{category.name|title}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+
+        </div>
+        <br>
+        <input type='submit' value='Edit'>
+    </form>
+    <a href="{{url_for('latestItems')}}">Cancel</a>
+
+</body>
+
+</html>
