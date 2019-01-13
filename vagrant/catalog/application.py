@@ -246,26 +246,27 @@ def deleteItem(item_name):
     else:
         return render_template('delete_item.html', item=deleteItem)
 
-# @app.route('/categories/JSON')
-# def categoriesJSON():
-#     categories = session.query(category).all()
-#     return jsonify(category=[i.serialize for i in categories])
+@app.route('/catalog.json')
+def getItemsByCategoryJSON():
+    categories = session.query(Category).all()
+    categoryList = []
+    for category in categories:
+        itemsFromCategory = session.query(Item).filter_by(
+            category_id=category.id).all()
+        
+        categoryItem = {
+            'id': category.id,
+            'name': category.name,
+            'Item': [item.serialize for item in itemsFromCategory],
+        }
+        
+        categoryList.append(categoryItem)
 
-# @app.route('/categories/<int:category_id>/menu/JSON')
-# def categoryMenuJSON(category_id):
-#     category = session.query(category).filter_by(id=category_id).one()
-#     items = session.query(MenuItem).filter_by(
-#         category_id=category.id).all()
-#     return jsonify(MenuItems=[i.serialize for i in items])
+    return jsonify(Category=categoryList)
 
-# @app.route('/categories/<int:category_id>/menu/<int:menu_id>/JSON')
-# def categoryMenuItemJSON(category_id, menu_id):
-#     menuItem = session.query(MenuItem).filter_by(category_id=category_id, id=menu_id).one()
-#     return jsonify(MenuItems=menuItem.serialize)
 
 
 if __name__ == '__main__':
-    myVar = None
     app.secret_key = "super_secret_key"
     app.debug = True
     app.run(host='0.0.0.0', port=8000)

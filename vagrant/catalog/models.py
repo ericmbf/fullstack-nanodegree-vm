@@ -56,9 +56,10 @@ class Category(Base):
     @property
     def serialize(self):
        """Return object data in easily serializeable format"""
+
        return {
            'id'           : self.id,
-           'name'         : self.name,
+           'name'         : self.name
        }
  
 class Item(Base):
@@ -77,10 +78,10 @@ class Item(Base):
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
-           'id'             : self.id,
-           'name'           : self.name,
-           'description'    : self.description,
-           'category'       : self.category.name,
+           'cat_id'             : self.category_id,
+           'description'        : self.description,
+           'id'                 : self.id,
+           'title'              : self.name
        }
 
 
