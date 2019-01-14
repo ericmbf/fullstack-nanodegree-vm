@@ -12,6 +12,7 @@ import random, string
 import httplib2
 import json
 import requests
+from flask_httpauth import HTTPBasicAuth
 
 app = Flask(__name__)
 
@@ -23,7 +24,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('./client_secrets.json', 'r').read())['web']['client_id']
 
 # Create anti-forgery state token
 @app.route('/login')
@@ -31,7 +32,6 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
 
@@ -109,6 +109,7 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    
     # ADD PROVIDER TO LOGIN SESSION
     login_session['provider'] = 'google'
 
@@ -198,6 +199,8 @@ def getItem(category_name, item_name):
 
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
 def addItem():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         category = session.query(Category).filter_by(name=request.form['category']).one()
         newItem = Item(name=request.form['name'],
@@ -216,6 +219,8 @@ def addItem():
 
 @app.route('/catalog/<string:item_name>/edit/', methods=['GET', 'POST'])
 def editItem(item_name):
+    if 'username' not in login_session:
+        return redirect('/login')
     editItem = session.query(Item).filter_by(name=item_name).one()
     categories = session.query(Category).all()
 
@@ -236,6 +241,8 @@ def editItem(item_name):
 
 @app.route('/catalog/<string:item_name>/delete/', methods=['GET', 'POST'])
 def deleteItem(item_name):
+    if 'username' not in login_session:
+        return redirect('/login')
     deleteItem = session.query(Item).filter_by(name=item_name).one()
 
     if request.method == 'POST':
