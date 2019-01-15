@@ -14,12 +14,12 @@ session.add(category1)
 session.commit()
 
 item1 = Item(name="Stick", description="""A hockey stick is a piece of sport
-equipment used by the players in all the forms of hockey to move the ball or 
-puck (as appropriate to the type of hockey) either to push, pull, hit, strike,
-flick, steer, launch or stop the ball/puck during play with the objective 
-being to move the ball/puck around the playing area and between team members 
-using the stick, and to ultimately score a goal with it against an opposing 
-team.""", category=category1)
+    equipment used by the players in all the forms of hockey to move the ball
+    or puck (as appropriate to the type of hockey) either to push, pull, hit,
+    strike, flick, steer, launch or stop the ball/puck during play with the
+    objective being to move the ball/puck around the playing area and between
+    team members using the stick, and to ultimately score a goal with it
+    against an opposing team.""", category=category1)
 
 session.add(item1)
 session.commit()
