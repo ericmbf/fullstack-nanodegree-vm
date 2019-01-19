@@ -315,4 +315,5 @@ def getItemsByCategoryJSON():
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(host='0.0.0.0', port=8000)
