@@ -8,7 +8,7 @@ from passlib.apps import custom_app_context as pwd_context
 import random
 import string
 from itsdangerous import(
-    TimedJSONWebSignatureSerializer as Serializer, cBadSignature,
+    TimedJSONWebSignatureSerializer as Serializer, BadSignature,
     SignatureExpired)
 
 Base = declarative_base()
@@ -35,10 +35,10 @@ class Category(Base):
     def serialize(self):
         "Return object data in easily serializeable format"
 
-    return {
-       'id':    self.id,
-       'name':  self.name
-    }
+        return {
+            'id':    self.id,
+            'name':  self.name
+        }
 
 
 class Item(Base):
