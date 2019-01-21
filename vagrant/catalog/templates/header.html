@@ -7,7 +7,9 @@
 				<a class="text-light" href="{{url_for('showLogin')}}">Login </a>
 			</button>
 			{% else %}
-			<a class="text-light" href="{{url_for('disconnect')}}">Logout </a>
+			<button type="button" class="btn btn-success login-button">
+				<a class="text-light" href="{{url_for('disconnect')}}">Logout</a>
+			</button>
 			{% endif %}
 		</span>
 	</div>
