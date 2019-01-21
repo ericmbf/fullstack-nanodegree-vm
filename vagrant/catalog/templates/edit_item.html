@@ -1,36 +1,39 @@
-<html>
-
-<head>
-    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
-</head>
-
-<body>
-    <h1> Edit Item </h1>
-
-    <form id='new_item' action="{{url_for('editItem', item_name=item.name)}}" method='POST'>
-
-        <div>
-            <p>Title:</p>
-            <input type='text' size='30' name='name' value='{{item.name}}'>
-            <p>Description:</p>
-            ​<textarea rows="4" cols="50" name="description" form="new_item">{{item.description}}</textarea>
-            <p>Category:</p>
-            <select name="category">
-                {% for category in categories %}
-                {% if category.id == item.category.id %}
-                <option value="{{category.name}}" selected>{{category.name|title}}</option>
-                {% else %}
-                <option value="{{category.name}}">{{category.name|title}}</option>
-                {% endif %}
-                {% endfor %}
-            </select>
-
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<div class="container pt-2">
+    <div class="row box-shadow p-2">
+        <div class="col-12 border-bottom">
+            <h3>Edit Item</h3>
         </div>
-        <br>
-        <input type='submit' value='Save'>
-    </form>
-    <a href="{{url_for('latestItems')}}">Cancel</a>
-
-</body>
-
-</html>
+        <div class="col-12 p-3">
+            <form id='edit_item' action="{{url_for('editItem', item_name=item.name)}}" method='POST'>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input name="name" type="text" class="form-control" id="name" aria-describedby="name" placeholder="{{item.name}}"
+                        value="{{item.name}}">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" class="form-control" id="description" rows="3">{{item.description}}
+                    </textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Categories</label>
+                    <select name="category" class="form-control" id="category">
+                        {% for category in categories %}
+                        {% if category.id == item.category.id %}
+                        <option value="{{category.name}}" selected>{{category.name|title}}</option>
+                        {% else %}
+                        <option value="{{category.name}}">{{category.name|title}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn btn-danger">Save</button>
+                | <a class="font-color" href="{{url_for('latestItems')}}">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
