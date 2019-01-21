@@ -1,13 +1,13 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-primary">
+<nav class="navbar navbar-expand-lg navbar-light bg-info">
 	<div class="container">
 		<a href="/" class="navbar-brand text-light">Catalog</a>
 		<span class="navbar-text small text-truncate mt-1 w-50 text-right order-1 order-md-last">
 			{% if 'username' not in session %}
-			<button type="button" class="btn btn-success login-button">
+			<button type="button" class="btn btn-danger login-button">
 				<a class="text-light" href="{{url_for('showLogin')}}">Login </a>
 			</button>
 			{% else %}
-			<button type="button" class="btn btn-success login-button">
+			<button type="button" class="btn btn-danger login-button">
 				<a class="text-light" href="{{url_for('disconnect')}}">Logout</a>
 			</button>
 			{% endif %}

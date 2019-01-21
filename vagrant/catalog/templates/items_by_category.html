@@ -2,13 +2,13 @@
 {% block content %}
 {% include "header.html" %}
 
-<div class="container pt-2 text-dark">
-    <div class="row box-shadow pt-2">
+<div class="container pt-2 font-color">
+    <div class="row box-shadow p-2">
         <div class="col-md-4 border-right">
             <h3>Categories</h3>
             <ul>
                 {% for category in categories %}
-                <a class="text-dark" href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
+                <a class="font-color" href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
                     <li> {{ category.name }} </li>
                 </a>
                 {% endfor %}
@@ -20,7 +20,7 @@
             </h3>
             <ul>
                 {% for item in items %}
-                <a class="text-dark" href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
+                <a class="font-color" href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
                     <li> {{ item.name }}</li>
                 </a>
                 {% endfor %}

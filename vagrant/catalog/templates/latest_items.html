@@ -2,19 +2,19 @@
 {% block content %}
 {% include "header.html" %}
 <div class="container pt-2">
-    <div class="row box-shadow pt-2">
+    <div class="row box-shadow p-2">
         <div class="col-md-4 border-right">
-            <h3 class="text-dark">Categories</h3>
+            <h3 class="font-color">Categories</h3>
             <ul>
                 {% for category in categories %}
-                <a class="text-dark" href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
+                <a class="font-color" href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
                     <li> {{ category.name }} </li>
                 </a>
                 {% endfor %}
             </ul>
         </div>
         <div class="col-md-8">
-            <h3 class="text-dark">
+            <h3 class="font-color">
                 Latest Items
                 {% if login == true %}
                     <a id="add-item" href="{{ url_for('addItem') }}">Add new Item</a>
@@ -22,7 +22,7 @@
             </h3>
             <ul>
                 {% for item in latest_items %}
-                <a class="text-dark" href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
+                <a class="font-color" href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
                     <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
                 </a>
                 {% endfor %}
