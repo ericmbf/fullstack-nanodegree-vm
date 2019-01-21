@@ -1,37 +1,30 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
-<div class="row top-menu">
-    <div class="col-md-10"></div>
-    <div class="col-md-2 text-right">
-    </div>
-</div>
-<div class="row divider blue">
-    <div class="row">
-        <div class="row">
-            <div class="col-md-3">
-                <h1>Categories</h1>
-                <ul>
-                    {% for category in categories %}
-                    <a href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
-                        <li> {{ category.name }} </li>
-                    </a>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="col-md-9">
-                {% if login == true %}
-                <a href="{{ url_for('addItem') }}">Add new Item</a>
-                {% endif %}
-                <h1>Latest Items</h1>
-                <ul>
-                    {% for item in latest_items %}
-                    <a href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
-                        <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
-                    </a>
-                    {% endfor %}
-                </ul>
-            </div>
+<div class="container pt-2">
+    <div class="row box-shadow pt-2">
+        <div class="col-md-4 border-right">
+            <h2 class="text-dark">Categories</h2>
+            <ul>
+                {% for category in categories %}
+                <a class="text-dark" href="{{ url_for('getItemsFromCategory', category_name = category.name )}}">
+                    <li> {{ category.name }} </li>
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-8">
+            {% if login == true %}
+            <a href="{{ url_for('addItem') }}">Add new Item</a>
+            {% endif %}
+            <h2 class="text-dark">Latest Items</h2>
+            <ul>
+                {% for item in latest_items %}
+                <a class="text-dark" href="{{ url_for('getItem', category_name = item.category.name, item_name = item.name )}}">
+                    <li> {{ item.name }} (<span>{{item.category.name}}</span>) </li>
+                </a>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </div>
@@ -40,7 +33,6 @@
 <div class='flash'>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-
     <ul>
         {% for message in messages %}
         <li> <strong> {{ message }} </strong> </li>
@@ -48,6 +40,6 @@
     </ul>
     {% endif %}
     {% endwith %}
-
 </div>
+
 {% endblock %}

@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
@@ -12,13 +11,15 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="border-bottom text-center pt-2">
-            <a class="login-header" href="{{url_for('latestItems')}}">
+    <div class="container-fluid pt-2">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand mx-auto" href="{{url_for('latestItems')}}">
                 <h2>Catalog App</h2>
             </a>
+        </nav>
+        <div class="border-bottom text-center pt-2">
         </div>
-        <div class="container mt-5 pt-3 pb-3 text-center login-box">
+        <div class="container mt-5 pt-3 pb-3 text-center box-shadow login-box">
             <h4 class="text-center">Sign in</h4>
             <div id="signinButton" class="pt-4">
                 <span class="g-signin" data-scope="openid email" data-clientid="82463191693-9902rr8suet9th0f5ict4i9qmui6l1h0.apps.googleusercontent.com"
