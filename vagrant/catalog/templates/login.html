@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
@@ -11,28 +11,33 @@
 </head>
 
 <body>
-    <div class="container-fluid pt-2">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand mx-auto" href="{{url_for('latestItems')}}">
-                <h2>Catalog App</h2>
-            </a>
-        </nav>
-        <div class="border-bottom text-center pt-2">
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary justify-content-between">
+        <div class="container-fluid pt-2">
+            <div class="navbar-collapse collapse dual-nav w-50 order-1 order-md-0">
+            </div>
+            <a href="{{url_for('latestItems')}}" class="text-light navbar-brand mx-auto d-block text-center order-0 order-md-1 w-25">
+                Catalog</a>
+            <div class="navbar-collapse collapse dual-nav w-50 order-2">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-twitter"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href=""><i class="fa fa-github"></i></a></li>
+                </ul>
+            </div>
         </div>
-        <div class="container mt-5 pt-3 pb-3 text-center box-shadow login-box">
-            <h4 class="text-center">Sign in</h4>
-            <div id="signinButton" class="pt-4">
-                <span class="g-signin" data-scope="openid email" data-clientid="82463191693-9902rr8suet9th0f5ict4i9qmui6l1h0.apps.googleusercontent.com"
-                    data-redirecturi="postmessage" data-accesstype="offline" data-cookiepolicy="single_host_origin"
-                    data-callback="signInCallback" data-approvalprompt="force">
-                </span>
-            </div>
-            or
-            <div class="pt-2">
-                <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
-                    <a id="" href='javascript:sendTokenToServer()'>Login with Facebook</a>
-                </fb:login-button>
-            </div>
+    </nav>
+    <div class="container mt-5 pt-3 pb-3 text-center box-shadow login-box">
+        <h4 class="text-center">Sign in</h4>
+        <div id="signinButton" class="pt-4">
+            <span class="g-signin" data-scope="openid email" data-clientid="82463191693-9902rr8suet9th0f5ict4i9qmui6l1h0.apps.googleusercontent.com"
+                data-redirecturi="postmessage" data-accesstype="offline" data-cookiepolicy="single_host_origin"
+                data-callback="signInCallback" data-approvalprompt="force">
+            </span>
+        </div>
+        or
+        <div class="pt-2">
+            <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
+                <a id="" href='javascript:sendTokenToServer()'>Login with Facebook</a>
+            </fb:login-button>
         </div>
     </div>
 
