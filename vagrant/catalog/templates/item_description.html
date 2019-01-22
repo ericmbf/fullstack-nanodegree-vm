@@ -13,8 +13,8 @@
         </div>
         {% if login == true %}
         <div class="col-md-12 pl-4">
-            <a href="{{ url_for('editItem', item_name = item.name) }}">Edit | </a>
-            <a href="{{ url_for('deleteItem', item_name = item.name) }}">Delete</a>
+            <a class="btn btn-danger" href="{{ url_for('editItem', item_name = item.name) }}" role="button">Edit</a>
+            <a class="btn btn-danger" href="{{ url_for('deleteItem', item_name = item.name) }}" role="button">Delete</a>
         </div>
         {% endif %}
     </div>
