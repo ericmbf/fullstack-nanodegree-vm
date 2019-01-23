@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, desc
 from sqlalchemy.event import listen
 from sqlalchemy import event, DDL
 from sqlalchemy.orm import sessionmaker
-from models import Base, Category, Item, User
+from models import Base, Category, Item, User, engine
 from flask import session as login_session
 from flask import make_response
 from oauth2client.client import flow_from_clientsecrets
@@ -16,11 +16,12 @@ import httplib2
 import json
 import requests
 from flask_httpauth import HTTPBasicAuth
+from flask_wtf.csrf import CSRFProtect, CSRFError
+
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 
-engine = create_engine('sqlite:///categoryitems.db',
-                       connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -199,6 +200,7 @@ def getItem(category_name, item_name):
 
 
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
+@csrf.exempt
 def addItem():
     if 'username' not in login_session:
         return redirect('/login')
@@ -222,6 +224,7 @@ def addItem():
 
 
 @app.route('/catalog/<string:item_name>/edit/', methods=['GET', 'POST'])
+@csrf.exempt
 def editItem(item_name):
     if 'username' not in login_session:
         return redirect('/login')
@@ -244,6 +247,7 @@ def editItem(item_name):
 
 
 @app.route('/catalog/<string:item_name>/delete/', methods=['GET', 'POST'])
+@csrf.exempt
 def deleteItem(item_name):
     if 'username' not in login_session:
         return redirect('/login')
@@ -275,8 +279,14 @@ def getItemsByCategoryJSON():
     return jsonify(Category=categoryList)
 
 
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('csrf_error.html', reason=e.description), 400
+
+
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
     app.config['TEMPLATES_AUTO_RELOAD'] = True
+    csrf.init_app(app)
     app.run(host='0.0.0.0', port=8000)

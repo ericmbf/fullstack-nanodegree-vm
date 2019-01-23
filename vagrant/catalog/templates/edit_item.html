@@ -8,6 +8,7 @@
         </div>
         <div class="col-12 p-3">
             <form id='edit_item' action="{{url_for('editItem', item_name=item.name)}}" method='POST'>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input name="name" type="text" class="form-control" id="name" aria-describedby="name" placeholder="{{item.name}}"
