@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from flask import Flask, render_template, request, redirect, url_for, \
-    jsonify, flash
+    jsonify
 from sqlalchemy import create_engine, desc
 from sqlalchemy.event import listen
 from sqlalchemy import event, DDL
@@ -131,21 +131,7 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
-    output += '<img src="'
-    output += login_session['picture']
-    output += \
-        """ " style = "width: 300px;
-        height: 300px;
-        border-radius: 150px;
-        -webkit-border-radius
-        150px;-moz-border-radius: 150px;">  """
-    flash('you are now logged in as %s' % login_session['username'])
-    print 'done!'
-    return output
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 
 def createUser(login_session):
@@ -229,7 +215,6 @@ def addItem():
             )
         session.add(newItem)
         session.commit()
-        flash('New Item Created')
         return redirect(url_for('latestItems'))
     else:
         categories = session.query(Category).all()
@@ -252,7 +237,6 @@ def editItem(item_name):
         editItem.category = category
         session.add(editItem)
         session.commit()
-        flash('Menu Item Successfully Edited')
         return redirect(url_for('latestItems'))
     else:
         return render_template('edit_item.html', item=editItem,
@@ -268,7 +252,6 @@ def deleteItem(item_name):
     if request.method == 'POST':
         session.delete(deleteItem)
         session.commit()
-        flash('Menu Item Successfully Deleted')
         return redirect(url_for('latestItems'))
     else:
         return render_template('delete_item.html', item=deleteItem)
