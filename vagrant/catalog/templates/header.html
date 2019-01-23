@@ -3,13 +3,17 @@
 		<a href="/" class="navbar-brand text-light">Catalog</a>
 		<span class="navbar-text small text-truncate mt-1 w-50 text-right order-1 order-md-last">
 			{% if 'username' not in session %}
-			<button type="button" class="btn btn-danger login-button">
-				<a class="text-light" href="{{url_for('showLogin')}}">Login </a>
-			</button>
+			<a class="text-light" href="{{url_for('showLogin')}}">
+				<button type="button" class="btn btn-danger login-button">
+					Login
+				</button>
+			</a>
 			{% else %}
-			<button type="button" class="btn btn-danger login-button">
-				<a class="text-light" href="{{url_for('disconnect')}}">Logout</a>
-			</button>
+			<a class="text-light" href="{{url_for('disconnect')}}">
+				<button type="button" class="btn btn-danger login-button">
+					Logout
+				</button>
+			</a>
 			{% endif %}
 		</span>
 	</div>
