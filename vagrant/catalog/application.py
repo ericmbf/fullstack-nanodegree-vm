@@ -192,7 +192,8 @@ def getItem(category_name, item_name):
         category_id=category.id, name=item_name).one()
     login = False
 
-    if login_session.get('user_id'):
+    # Check item owner
+    if checkItemOwner(item):
         login = True
 
     return render_template('item_description.html', item=item,
@@ -228,7 +229,13 @@ def addItem():
 def editItem(item_name):
     if 'username' not in login_session:
         return redirect('/login')
+    
     editItem = session.query(Item).filter_by(name=item_name).one()
+
+    # Check item owner
+    if not checkItemOwner(editItem):
+        return render_template('invalid_user.html', item_name=item_name)
+    
     categories = session.query(Category).all()
 
     if request.method == 'POST':
@@ -251,7 +258,12 @@ def editItem(item_name):
 def deleteItem(item_name):
     if 'username' not in login_session:
         return redirect('/login')
+    
     deleteItem = session.query(Item).filter_by(name=item_name).one()
+
+    # Check item owner
+    if not checkItemOwner(deleteItem):
+        return render_template('invalid_user.html', item_name=item_name)
 
     if request.method == 'POST':
         session.delete(deleteItem)
@@ -306,6 +318,10 @@ def getCatalogJSON():
 def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
 
+
+def checkItemOwner(item):
+    user = getUserInfo(login_session['user_id'])
+    return (item.user_id == user.id)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
