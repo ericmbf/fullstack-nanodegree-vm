@@ -261,8 +261,30 @@ def deleteItem(item_name):
         return render_template('delete_item.html', item=deleteItem)
 
 
+@app.route('/catalog/Categories.json')
+def getAllCategoriesJSON():
+    categoriesList = session.query(Category).all()
+    return jsonify(Categories=[i.serialize for i in categoriesList])
+
+@app.route('/catalog/<string:category_name>/Items.json')
+def getItemsByCategoryJSON(category_name):
+    category = \
+        session.query(Category).filter_by(name=category_name).one()
+    items = session.query(Item).filter_by(category_id=category.id).all()
+
+    return jsonify(Items=[i.serialize for i in items])
+
+@app.route('/catalog/<string:category_name>/<string:item_name>.json')
+def getItemJSON(category_name, item_name):
+    category = \
+        session.query(Category).filter_by(name=category_name).one()
+    item = session.query(Item).filter_by(
+        category_id=category.id, name=item_name).one()
+
+    return jsonify(Item=item.serialize)
+
 @app.route('/catalog.json')
-def getItemsByCategoryJSON():
+def getCatalogJSON():
     categories = session.query(Category).all()
     categoryList = []
     for category in categories:
@@ -277,6 +299,7 @@ def getItemsByCategoryJSON():
         categoryList.append(categoryItem)
 
     return jsonify(Category=categoryList)
+
 
 
 @app.errorhandler(CSRFError)
