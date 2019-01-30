@@ -20,7 +20,7 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 
 
 app = Flask(__name__)
-csrf = CSRFProtect(app)
+csrf = CSRFProtect()
 
 Base.metadata.bind = engine
 
@@ -29,6 +29,7 @@ session = DBSession()
 
 CLIENT_ID = \
     json.loads(open('./client_secrets.json', 'r').read())['web']['client_id']
+
 
 # Implement anti-forgery state token
 @app.route('/login')
@@ -42,8 +43,10 @@ def showLogin():
 
 @app.route('/disconnect')
 def disconnect():
-    del login_session['username']
-    del login_session['user_id']
+    if login_session.get('username'):
+        del login_session['username']
+    if login_session.get('user_id'):
+        del login_session['user_id']
     return redirect(url_for('latestItems'))
 
 
@@ -132,7 +135,8 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    return json.dumps({'success': True}), 200, {
+        'ContentType': 'application/json'}
 
 
 def createUser(login_session):
@@ -229,13 +233,11 @@ def addItem():
 def editItem(item_name):
     if 'username' not in login_session:
         return redirect('/login')
-    
     editItem = session.query(Item).filter_by(name=item_name).one()
 
     # Check item owner
     if not checkItemOwner(editItem):
         return render_template('invalid_user.html', item_name=item_name)
-    
     categories = session.query(Category).all()
 
     if request.method == 'POST':
@@ -258,7 +260,6 @@ def editItem(item_name):
 def deleteItem(item_name):
     if 'username' not in login_session:
         return redirect('/login')
-    
     deleteItem = session.query(Item).filter_by(name=item_name).one()
 
     # Check item owner
@@ -278,6 +279,7 @@ def getAllCategoriesJSON():
     categoriesList = session.query(Category).all()
     return jsonify(Categories=[i.serialize for i in categoriesList])
 
+
 @app.route('/catalog/<string:category_name>/Items.json')
 def getItemsByCategoryJSON(category_name):
     category = \
@@ -285,6 +287,7 @@ def getItemsByCategoryJSON(category_name):
     items = session.query(Item).filter_by(category_id=category.id).all()
 
     return jsonify(Items=[i.serialize for i in items])
+
 
 @app.route('/catalog/<string:category_name>/<string:item_name>.json')
 def getItemJSON(category_name, item_name):
@@ -294,6 +297,7 @@ def getItemJSON(category_name, item_name):
         category_id=category.id, name=item_name).one()
 
     return jsonify(Item=item.serialize)
+
 
 @app.route('/catalog.json')
 def getCatalogJSON():
@@ -313,19 +317,21 @@ def getCatalogJSON():
     return jsonify(Category=categoryList)
 
 
-
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
 
 
 def checkItemOwner(item):
-    user = getUserInfo(login_session['user_id'])
-    return (item.user_id == user.id)
+    if login_session.get('user_id'):
+        user = getUserInfo(login_session.get('user_id'))
+        return (item.user_id == user.id)
+    return False
+
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
     csrf.init_app(app)
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(host='0.0.0.0', port=8000)

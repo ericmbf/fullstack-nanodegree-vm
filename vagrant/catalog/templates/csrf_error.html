@@ -7,14 +7,14 @@
             <h3>CSRF protection: {{reason}}</h3>
         </div>
         <div class="col-12 p-3">
-            <form action="{{ url_for('deleteItem', item_name = item.name) }}" method='POST'>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <button type="submit" class="btn btn btn-danger">
-                    <a class="font-color" href="{{url_for('latestItems')}}">
-                        Back
-                    </a>
-                </button>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             </form>
+            <button type="submit" class="btn btn btn-danger">
+                <a class="font-color" href="{{url_for('latestItems')}}">
+                    Back
+                </a>
+            </button>
         </div>
     </div>
 </div>
