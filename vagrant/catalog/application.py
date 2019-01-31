@@ -31,9 +31,14 @@ CLIENT_ID = \
     json.loads(open('./client_secrets.json', 'r').read())['web']['client_id']
 
 
-# Implement anti-forgery state token
 @app.route('/login')
 def showLogin():
+    """
+        Implement anti-forgery state token and redirect to login.html page.
+    Args:
+    Returns:
+        The login.html page to authentication.
+    """
     state = ''.join(
         random.choice(
             string.ascii_uppercase + string.digits) for x in xrange(32))
@@ -43,6 +48,12 @@ def showLogin():
 
 @app.route('/disconnect')
 def disconnect():
+    """
+        Disconnect the user from session.
+    Args:
+    Returns:
+        Redirect to the main page from applicaiton.
+    """
     if login_session.get('username'):
         del login_session['username']
     if login_session.get('user_id'):
@@ -52,7 +63,12 @@ def disconnect():
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-
+    """
+        Implement the google oauth2 authentication process.
+    Args:
+    Returns:
+        Return 200 code if the authentication was successful.
+    """
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(
@@ -129,6 +145,7 @@ def gconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
+    # Check if the acess token is valid
     if stored_access_token is not None and gplus_id == stored_gplus_id:
         response = make_response(
             json.dumps('Current user is already connected.'), 200)
@@ -140,6 +157,13 @@ def gconnect():
 
 
 def createUser(login_session):
+    """
+        Create a new user to application on database
+    Args:
+        login_session: the session from user
+    Returns:
+        Return the user id created
+    """
     newUser = User(username=login_session['username'],
                    email=login_session['email'],
                    picture=login_session['picture'])
@@ -150,11 +174,25 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    """
+        Return the user information.
+    Args:
+        user_id: The user ID.
+    Returns:
+        Return the user model.
+    """
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    """
+        Return the user ID by email.
+    Args:
+        email: The user email.
+    Returns:
+        Return the user UD.
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -165,11 +203,20 @@ def getUserID(email):
 @app.route('/')
 @app.route('/catalog/')
 def latestItems():
+    """
+        Render the main page with the 5 most recently added items in catalog
+        and all the categories.
+    Args:
+    Returns:
+        Render the main page from web application.
+    """
+    # Get all categories
     categories = session.query(Category).all()
+    # Get the recently itens added
     latest_items = \
         session.query(Item).order_by(desc(Item.id)).limit(5).all()
     login = False
-
+    # Check if the user is logged
     if login_session.get('user_id'):
         login = True
 
@@ -179,6 +226,13 @@ def latestItems():
 
 @app.route('/catalog/<string:category_name>/Items')
 def getItemsFromCategory(category_name):
+    """
+        Return the 5 most recently added items in catalog.
+    Args:
+        email: The user email.
+    Returns:
+        Return the user UD.
+    """
     categories = session.query(Category).all()
     category = \
         session.query(Category).filter_by(name=category_name).one()
@@ -190,8 +244,18 @@ def getItemsFromCategory(category_name):
 
 @app.route('/catalog/<string:category_name>/<string:item_name>')
 def getItem(category_name, item_name):
+    """
+        Render a specific item description.
+    Args:
+        category_name: the category_name
+        item_name: the specific item
+    Returns:
+        Render the item_description.html page.
+    """
+    # Get the category
     category = \
         session.query(Category).filter_by(name=category_name).one()
+    # Get the item using category ID
     item = session.query(Item).filter_by(
         category_id=category.id, name=item_name).one()
     login = False
@@ -207,6 +271,13 @@ def getItem(category_name, item_name):
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
 @csrf.exempt
 def addItem():
+    """
+        Handle the insert of item to catalog.
+    Args:
+    Returns:
+        Render the new_item.html page when method is GET and add the new item
+        when the method is POST.
+    """
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
@@ -231,6 +302,13 @@ def addItem():
 @app.route('/catalog/<string:item_name>/edit/', methods=['GET', 'POST'])
 @csrf.exempt
 def editItem(item_name):
+    """
+        Handle the edit item from catalog.
+    Args:
+    Returns:
+        Render the edit_item.html page when method is GET and edit item
+        when the method is POST.
+    """
     if 'username' not in login_session:
         return redirect('/login')
     editItem = session.query(Item).filter_by(name=item_name).one()
@@ -258,6 +336,13 @@ def editItem(item_name):
 @app.route('/catalog/<string:item_name>/delete/', methods=['GET', 'POST'])
 @csrf.exempt
 def deleteItem(item_name):
+    """
+        Handle the delete item from catalog.
+    Args:
+    Returns:
+        Render the delete_item.html page when method is GET and delete item
+        when the method is POST.
+    """
     if 'username' not in login_session:
         return redirect('/login')
     deleteItem = session.query(Item).filter_by(name=item_name).one()
@@ -276,12 +361,25 @@ def deleteItem(item_name):
 
 @app.route('/catalog/Categories.json')
 def getAllCategoriesJSON():
+    """
+        Implement a endpoint to get all categgories from catalog
+    Args:
+    Returns:
+        All categories in JSON format.
+    """
     categoriesList = session.query(Category).all()
     return jsonify(Categories=[i.serialize for i in categoriesList])
 
 
 @app.route('/catalog/<string:category_name>/Items.json')
 def getItemsByCategoryJSON(category_name):
+    """
+        Implement a endpoint to get all item from category
+    Args:
+        category_name: Category name.
+    Returns:
+        All items from category in JSON format.
+    """
     category = \
         session.query(Category).filter_by(name=category_name).one()
     items = session.query(Item).filter_by(category_id=category.id).all()
@@ -291,6 +389,14 @@ def getItemsByCategoryJSON(category_name):
 
 @app.route('/catalog/<string:category_name>/<string:item_name>.json')
 def getItemJSON(category_name, item_name):
+    """
+        Implement a endpoint to get a specific item.
+    Args:
+        category_name: Category name.
+        item_name: item name.
+    Returns:
+        Return a specific item in JSON format.
+    """
     category = \
         session.query(Category).filter_by(name=category_name).one()
     item = session.query(Item).filter_by(
@@ -301,6 +407,12 @@ def getItemJSON(category_name, item_name):
 
 @app.route('/catalog.json')
 def getCatalogJSON():
+    """
+        Implement a endpoint to get all categories with all items.
+    Args:
+    Returns:
+        Return all categories with its specifics items in JSON format.
+    """
     categories = session.query(Category).all()
     categoryList = []
     for category in categories:
@@ -319,10 +431,22 @@ def getCatalogJSON():
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
+    """
+        Handle csrf error.
+    Args:
+    Returns:
+        Return a csrf error page with error description
+    """
     return render_template('csrf_error.html', reason=e.description), 400
 
 
 def checkItemOwner(item):
+    """
+        Verify the item owner to edit or delete permissions.
+    Args:
+    Returns:
+        Return true if the the item is from the user logged.
+    """
     if login_session.get('user_id'):
         user = getUserInfo(login_session.get('user_id'))
         return (item.user_id == user.id)
