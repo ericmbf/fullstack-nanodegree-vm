@@ -17,6 +17,7 @@ import json
 import requests
 from flask_httpauth import HTTPBasicAuth
 from flask_wtf.csrf import CSRFProtect, CSRFError
+from functools import wraps
 
 
 app = Flask(__name__)
@@ -241,6 +242,18 @@ def getItemsFromCategory(category_name):
                            categories=categories)
 
 
+def checkItemOwner(function):
+    @wraps(function)
+    def wrapper(item_name):
+        if login_session.get('user_id'):
+            item = session.query(Item).filter_by(name=item_name).one()
+            user = getUserInfo(login_session.get('user_id'))
+            if item.user_id == user.id:
+                return function(item_name)
+        return render_template('invalid_user.html', item_name=item_name)
+    return wrapper
+
+
 @app.route('/catalog/<string:category_name>/<string:item_name>')
 def getItem(category_name, item_name):
     """
@@ -260,14 +273,26 @@ def getItem(category_name, item_name):
     login = False
 
     # Check item owner
-    if checkItemOwner(item):
+    user = getUserInfo(login_session.get('user_id'))
+    if item.user_id == user.id:
         login = True
 
     return render_template('item_description.html', item=item,
                            login=login)
 
 
+def login_required(function):
+    @wraps(function)
+    def wrapper():
+        if 'username' in login_session:
+            return function()
+        else:
+            return showLogin()
+    return wrapper
+
+
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
+@login_required
 @csrf.exempt
 def addItem():
     """
@@ -277,8 +302,6 @@ def addItem():
         Render the new_item.html page when method is GET and add the new item
         when the method is POST.
     """
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         category = session.query(Category).filter_by(
             name=request.form['category']).one()
@@ -299,6 +322,7 @@ def addItem():
 
 
 @app.route('/catalog/<string:item_name>/edit/', methods=['GET', 'POST'])
+@checkItemOwner
 @csrf.exempt
 def editItem(item_name):
     """
@@ -308,13 +332,7 @@ def editItem(item_name):
         Render the edit_item.html page when method is GET and edit item
         when the method is POST.
     """
-    if 'username' not in login_session:
-        return redirect('/login')
     editItem = session.query(Item).filter_by(name=item_name).one()
-
-    # Check item owner
-    if not checkItemOwner(editItem):
-        return render_template('invalid_user.html', item_name=item_name)
     categories = session.query(Category).all()
 
     if request.method == 'POST':
@@ -333,6 +351,7 @@ def editItem(item_name):
 
 
 @app.route('/catalog/<string:item_name>/delete/', methods=['GET', 'POST'])
+@checkItemOwner
 @csrf.exempt
 def deleteItem(item_name):
     """
@@ -342,13 +361,7 @@ def deleteItem(item_name):
         Render the delete_item.html page when method is GET and delete item
         when the method is POST.
     """
-    if 'username' not in login_session:
-        return redirect('/login')
     deleteItem = session.query(Item).filter_by(name=item_name).one()
-
-    # Check item owner
-    if not checkItemOwner(deleteItem):
-        return render_template('invalid_user.html', item_name=item_name)
 
     if request.method == 'POST':
         session.delete(deleteItem)
@@ -437,19 +450,6 @@ def handle_csrf_error(e):
         Return a csrf error page with error description
     """
     return render_template('csrf_error.html', reason=e.description), 400
-
-
-def checkItemOwner(item):
-    """
-        Verify the item owner to edit or delete permissions.
-    Args:
-    Returns:
-        Return true if the the item is from the user logged.
-    """
-    if login_session.get('user_id'):
-        user = getUserInfo(login_session.get('user_id'))
-        return (item.user_id == user.id)
-    return False
 
 
 if __name__ == '__main__':
