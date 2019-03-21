@@ -61,8 +61,8 @@ class Item(Base):
            'title': self.name
         }
 
-
-engine = create_engine(
-    'sqlite:///categoryitems.db', connect_args={'check_same_thread': False})
+engine = create_engine('postgresql://catalog:password@localhost/catalog')
+# engine = create_engine(
+#     'sqlite:///categoryitems.db', connect_args={'check_same_thread': False})
 
 Base.metadata.create_all(engine)
