@@ -20,9 +20,13 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 from functools import wraps
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from flask import session
+from flask.ext.session import Session
 
 
 app = Flask(__name__)
+app.config.from_object(__name__)
+Session(app)
 csrf = CSRFProtect()
 
 Base.metadata.bind = engine
@@ -31,7 +35,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 CLIENT_ID = \
-    json.loads(open('./client_secrets.json', 'r').read())['web']['client_id']
+    json.loads(open('/var/www/fullstack-nanodegree-vm/vagrant/catalog/client_secrets.json', 'r').read())['web']['client_id']
 
 
 @app.route('/login')
