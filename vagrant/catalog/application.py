@@ -24,9 +24,6 @@ from flask import session
 from flask_session.__init__ import Session
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key'
-app.config.from_object(__name__)
-Session(app)
 csrf = CSRFProtect()
 
 Base.metadata.bind = engine
@@ -402,5 +399,8 @@ def handle_csrf_error(e):
 if __name__ == '__main__':
     app.debug = True
     csrf.init_app(app)
+    app.config['SECRET_KEY'] = b'_5#y2L"F4Q8z\n\xec]/'
     app.config['TEMPLATES_AUTO_RELOAD'] = True
+    sess = Session()
+    sess.init_app(app)
     app.run(host='0.0.0.0', port=8000)
