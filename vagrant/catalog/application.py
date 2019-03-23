@@ -23,8 +23,8 @@ from google.auth.transport import requests
 from flask import session
 from flask.ext.session import Session
 
-
 app = Flask(__name__)
+app.secret_key = 'super_secret_key'
 app.config.from_object(__name__)
 Session(app)
 csrf = CSRFProtect()
@@ -400,7 +400,6 @@ def handle_csrf_error(e):
 
 
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
     app.debug = True
     csrf.init_app(app)
     app.config['TEMPLATES_AUTO_RELOAD'] = True
