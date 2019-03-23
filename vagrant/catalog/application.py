@@ -21,7 +21,7 @@ from functools import wraps
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from flask import session
-from flask.ext.session import Session
+from flask_session.__init__ import Session
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
