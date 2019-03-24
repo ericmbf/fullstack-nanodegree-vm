@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="{{client_id}}">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 
 <body>
@@ -30,16 +33,9 @@
         <form method='POST'>
             <input type="hidden" name="csrf_token" value="{{ state }}"/>
         </form>
-        <div id="signinButton" class="pt-4">
-            <span class="g-signin" 
-                data-scope="openid email" 
-                data-clientid="{{client_id}}"
-                data-redirecturi="postmessage" 
-                data-accesstype="offline" 
-                data-cookiepolicy="single_host_origin"
-                data-callback="signInCallback" 
-                data-approvalprompt="auto">
-            </span>
+        <div class="pl-5">
+            <div class="g-signin2" data-onsuccess="signInCallback" 
+                data-theme="dark"></div>
         </div>
     </div>
 
@@ -52,10 +48,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="https://apis.google.com/js/platform.js?onload=start"> </script>
+    <!-- <script src="https://apis.google.com/js/platform.js?onload=start"> </script> -->
     <script>
-        function signInCallback(authResult) {
-            if (authResult['code']) {
+        function signInCallback(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+            console.error();
+            if (id_token) {
                 var csrf_token = "{{ csrf_token() }}";
 
                 $.ajaxSetup({
@@ -66,21 +64,21 @@
                     }
                 });
 
+                var clicked = true;
                 // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
                 $.ajax({
                     type: 'POST',
-                    url: '/gconnect?state={{STATE}}',
-                    processData: false,
-                    data: authResult['code'],
-                    contentType: 'application/octet-stream; charset=utf-8',
+                    url: '/gconnect?state={{STATE}}&id_token=' + id_token,
+                    data : {'data':clicked},
+                    contentType: 'application/json;charset=UTF-8',
                     success: function (result) {
                         // Handle or verify the server response if necessary.
                         if (result) {
                             setTimeout(function () {
                                 window.location.href = "/catalog/";
                             }, 1000);
-                        } else if (authResult['error']) {
-                            console.log('There was an error: ' + authResult['error']);
+                        } else {
+                            console.log('There was an error.');
                         }
 
                     }
@@ -89,6 +87,23 @@
             }
         }
     </script>
+
+    <script>
+        function onSignIn(googleUser) {
+          // Useful data for your client-side scripts:
+          var profile = googleUser.getBasicProfile();
+          console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+          console.log('Full Name: ' + profile.getName());
+          console.log('Given Name: ' + profile.getGivenName());
+          console.log('Family Name: ' + profile.getFamilyName());
+          console.log("Image URL: " + profile.getImageUrl());
+          console.log("Email: " + profile.getEmail());
+  
+          // The ID token you need to pass to your backend:
+          var id_token = googleUser.getAuthResponse().id_token;
+          console.log("ID Token: " + id_token);
+        }
+      </script>
 </body>
 
 </html>
