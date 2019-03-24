@@ -21,15 +21,13 @@ from functools import wraps
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from flask import session
-from flask_session.__init__ import Session
+from flask.ext.session import Session
+
 
 app = Flask(__name__)
-sess = Session()
+app.config.from_object(__name__)
+Session(app)
 csrf = CSRFProtect()
-app.secret_key = 'super secret key'
-app.config['SESSION_TYPE'] = 'filesystem'
-sess.init_app(app)
-csrf.init_app(app)
 
 Base.metadata.bind = engine
 
@@ -402,5 +400,8 @@ def handle_csrf_error(e):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
+    app.debug = True
+    csrf.init_app(app)
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(host='0.0.0.0', port=8000)
