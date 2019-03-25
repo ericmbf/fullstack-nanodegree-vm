@@ -9,7 +9,7 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-user1 = User(username="someone")
+user1 = User(username='someone')
 session.add(user1)
 session.commit()
 session.refresh(user1)

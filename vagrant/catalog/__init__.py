@@ -217,9 +217,12 @@ def getItem(category_name, item_name):
     login = False
 
     # Check item owner
-    user = getUserInfo(login_session.get('user_id'))
-    if item.user_id == user.id:
-        login = True
+    user_id = login_session.get('user_id')
+
+    if user_id is not None:
+        user = getUserInfo(user_id)
+        if item.user_id == user.id:
+            login = True
 
     return render_template('item_description.html', item=item,
                            login=login)
