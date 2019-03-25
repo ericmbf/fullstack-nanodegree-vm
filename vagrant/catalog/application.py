@@ -95,7 +95,7 @@ def gconnect():
     login_session['email'] = data['email']
     login_session['provider'] = 'google'
 
-    return json.dumps({'success': true}), 200, {
+    return json.dumps({'success': True}), 200, {
         'ContentType': 'application/json'}
 
 
