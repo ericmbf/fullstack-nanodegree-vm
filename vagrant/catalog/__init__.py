@@ -80,10 +80,11 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-    token = request.args.get('id_token')
+    stored_access_token = request.args.get('id_token')
 
     try:
-        data = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+        data = id_token.verify_oauth2_token(stored_access_token, 
+            requests.Request(), CLIENT_ID)
     except:
         response = make_response(
             json.dumps('Invalid oauth authentication.'), 401)
@@ -95,6 +96,19 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
     login_session['provider'] = 'google'
+
+    # see if user exists, if it doesn't make a new one
+    user_id = getUserID(data['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
+    # Check if the acess token is valid
+    if stored_access_token is not None:
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
     return json.dumps({'success': True}), 200, {
         'ContentType': 'application/json'}
