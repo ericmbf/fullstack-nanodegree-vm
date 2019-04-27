@@ -1,5 +1,7 @@
 # Catalog
 
+This project is part of Full Stack Web Developer nanodregree  from Udacity. This repository implements a catalog application.
+
 # Installing the Vagrant VM for run the catalog project.
 
 ### Git
